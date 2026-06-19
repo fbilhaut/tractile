@@ -14,6 +14,12 @@ documentation = "https://docs.rs/tractile"
 [features]
 default = []
 metal = ["dep:tract-metal", "dep:tract-gpu"] # Apple Metal acceleration
+server = ["dep:actix-web", "dep:tokio", "dep:serde_json", "dep:toml", "dep:log", "dep:env_logger"]
+
+[[bin]]
+name = "server"
+path = "src/bin/server/main.rs"
+required-features = ["server"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -21,6 +27,13 @@ tract-onnx = "0.23"
 tract-core = "0.23"
 tokenizers = { version = "0.21", default-features = false, features = ["onig"] }
 ndarray = "0.17"
+# optional REST server
+actix-web  = { version = "4", optional = true }
+tokio      = { version = "1", features = ["full"], optional = true }
+serde_json = { version = "1", optional = true }
+toml       = { version = "0.8", optional = true }
+log        = { version = "0.4", optional = true }
+env_logger = { version = "0.11", optional = true }
 
 # Apple Silicon only — enabled via the `metal` feature
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]

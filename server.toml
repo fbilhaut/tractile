@@ -1,0 +1,8 @@
+port = 8080
+
+[embedding]
+tokenizer_path = "models/gte-multilingual-base/tokenizer.json"
+model_path     = "models/gte-multilingual-base/onnx/model.onnx"
+output_index   = 1
+mode           = "Raw"
+

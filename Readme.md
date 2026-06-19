@@ -10,7 +10,6 @@ Text-embedding inference in pure Rust powered by [tract](https://github.com/sono
 - HuggingFace-compatible tokenizer via `tokenizers`
 - Optional Apple Metal acceleration (`--features metal`)
 - Configurable embedding extraction: `Raw`, `Token(n)`, `MeanPool`
-- `Configuration` is serializable/deserializable via `serde`
 
 ## Quick start
 
@@ -40,15 +39,13 @@ println!("{similarities}");
 
 ```toml
 [dependencies]
-tractile = { path = "." }
+tractile = "0.1.0"
 
 # Enable Apple Metal (Apple Silicon only)
-# tractile = { path = ".", features = ["metal"] }
+# tractile = { version = "0.1.0", features = ["metal"] }
 ```
 
 ## Configuration
-
-`Configuration` can be built programmatically or deserialized from any serde-compatible format (JSON, TOML, …).
 
 | Method | Default | Description |
 |---|---|---|
@@ -66,7 +63,7 @@ tractile = { path = "." }
 
 ### Custom extractor
 
-Implement the `tractile::pipeline::Extractor` trait to plug in your own extraction logic.
+You can implement the `tractile::pipeline::Extractor` trait to plug in your own extraction logic.
 
 ## Examples
 
@@ -76,7 +73,7 @@ Implement the `tractile::pipeline::Extractor` trait to plug in your own extracti
 cargo run --release --example embed_sentences
 ```
 
-Mirrors the `embed-mul-sentence.rs` example from [gte-rs](https://github.com/fbilhaut/gte-rs). Embeds a multilingual batch and prints cosine similarities against the first sentence.
+Embeds a multilingual batch and prints cosine similarities against the first sentence.
 
 ### Benchmark
 

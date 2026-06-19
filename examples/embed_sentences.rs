@@ -4,10 +4,8 @@ use tractile::config::{Configuration, ExtractorMode};
 use tractile::input::TextInput;
 use tractile::pipeline::TextEmbeddingPipeline;
 
-const TOKENIZER: &str =
-    "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/tokenizer.json";
-const MODEL: &str =
-    "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/onnx/model.onnx";
+const TOKENIZER: &str = "models/gte-multilingual-base/tokenizer.json";
+const MODEL: &str = "models/gte-multilingual-base/onnx/model.onnx";
 
 fn main() -> tractile::Result<()> {
     let config = Configuration::new(TOKENIZER, MODEL)

@@ -5,9 +5,9 @@ use tractile::config::{Configuration, ExtractorMode};
 use tractile::pipeline::TextEmbeddingPipeline;
 
 const TOKENIZER: &str =
-    "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/tokenizer.json";
+    "models/gte-multilingual-base/tokenizer.json";
 const MODEL: &str =
-    "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/onnx/model.onnx";
+    "models/gte-multilingual-base/onnx/model.onnx";
 
 const BATCH_SIZE: usize = 32;
 const N_WARMUP: usize = 3;

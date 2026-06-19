@@ -1,0 +1,27 @@
+[package]
+name = "tractile"
+version = "0.1.0"
+edition = "2024"
+description = "ONNX text-embedding inference powered by tract"
+license = "Apache-2.0"
+authors = ["Frédérik Bilhaut <frederik.bilhaut@gmail.com>"]
+keywords = ["nlp", "text-embeddings", "reranking"]
+readme = "./Readme.md"
+homepage = "https://github.com/fbilhaut/tractile"
+repository = "https://github.com/fbilhaut/tractile"
+documentation = "https://docs.rs/tractile"
+
+[features]
+default = []
+metal = ["dep:tract-metal", "dep:tract-gpu"] # Apple Metal acceleration
+
+[dependencies]
+tract-onnx = "0.23"
+tract-core = "0.23"
+tokenizers = { version = "0.21", default-features = false, features = ["onig"] }
+ndarray = "0.17"
+
+# Apple Silicon only — enabled via the `metal` feature
+[target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
+tract-metal = { version = "0.23", optional = true }
+tract-gpu = { version = "0.23", optional = true }

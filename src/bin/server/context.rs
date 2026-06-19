@@ -2,6 +2,7 @@ use std::sync::Mutex;
 
 use tractile::config::Configuration;
 use tractile::pipeline::TextEmbeddingPipeline;
+
 use super::config::ServerConfig;
 
 pub struct AppContext {
@@ -17,5 +18,8 @@ impl AppContext {
 }
 
 fn load_pipeline(config: &Configuration) -> tractile::Result<Mutex<TextEmbeddingPipeline>> {
-    Ok(Mutex::new(TextEmbeddingPipeline::new(config.clone())?))
+    log::info!("Loading pipeline: model={:?}", config.model_path());
+    let pipeline = TextEmbeddingPipeline::new(config.clone())?;
+    log::info!("Pipeline ready");
+    Ok(Mutex::new(pipeline))
 }

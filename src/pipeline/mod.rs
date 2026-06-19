@@ -3,7 +3,7 @@ mod inference;
 mod model;
 mod tokenizer;
 
-pub use embeddings::ExtractorMode;
+pub use embeddings::Extractor;
 
 use model::Model;
 use tokenizers::Tokenizer;
@@ -13,7 +13,7 @@ use crate::config::Configuration;
 use crate::input::TextInput;
 use crate::output::TextEmbeddings;
 
-/// A ready-to-use text embedding pipeline.
+/// Ready-to-use text embedding pipeline.
 ///
 /// Wraps a tokenizer and an ONNX model loaded according to a [`Configuration`].
 pub struct TextEmbeddingPipeline {
@@ -36,7 +36,7 @@ impl TextEmbeddingPipeline {
         self.embed_texts(&texts)
     }
 
-    /// Convenience method — embed a slice of string references directly.
+    /// Embed a slice of string references
     pub fn embed_texts(&self, texts: &[&str]) -> crate::Result<TextEmbeddings> {
         let encodings = self.tokenizer
             .encode_batch(texts.to_vec(), true)
@@ -49,25 +49,18 @@ impl TextEmbeddingPipeline {
             .iter()
             .flat_map(|e| e.get_ids().iter().map(|&x| x as i64))
             .collect();
+
         let flat_mask: Vec<i64> = encodings
             .iter()
             .flat_map(|e| e.get_attention_mask().iter().map(|&x| x as i64))
             .collect();
 
         let ids: Tensor = tract_ndarray::Array2::from_shape_vec((n, seq_len), flat_ids)?.into();
-        let mask: Tensor =
-            tract_ndarray::Array2::from_shape_vec((n, seq_len), flat_mask.clone())?.into();
+        let mask: Tensor = tract_ndarray::Array2::from_shape_vec((n, seq_len), flat_mask.clone())?.into();
 
         let outputs = inference::run_inference(&self.model, ids, mask)?;
 
-        let emb = embeddings::extract_embeddings(
-            &outputs,
-            self.config.output_index(),
-            self.config.mode(),
-            &flat_mask,
-            n,
-            seq_len,
-        )?;
-        Ok(TextEmbeddings { embeddings: emb })
+        let embeddings = self.config.mode().extract(&outputs, self.config.output_index(), &flat_mask, n, seq_len)?;
+        Ok(TextEmbeddings { embeddings })
     }
 }

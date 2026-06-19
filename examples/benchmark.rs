@@ -1,7 +1,8 @@
 /// Measures throughput (sentences/sec) for a fixed batch size over many runs.
 /// Run with `--release` for meaningful numbers.
 use std::time::Instant;
-use tractile::{Configuration, ExtractorMode, TextEmbeddingPipeline};
+use tractile::config::{Configuration, ExtractorMode};
+use tractile::pipeline::TextEmbeddingPipeline;
 
 const TOKENIZER: &str =
     "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/tokenizer.json";

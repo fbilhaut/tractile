@@ -1,6 +1,8 @@
 /// Embeds a small batch of multilingual sentences and prints pairwise cosine
 /// similarities against the first one.  Mirrors `embed-mul-sentence.rs` from gte-rs.
-use tractile::{Configuration, ExtractorMode, TextEmbeddingPipeline, TextInput};
+use tractile::config::{Configuration, ExtractorMode};
+use tractile::input::TextInput;
+use tractile::pipeline::TextEmbeddingPipeline;
 
 const TOKENIZER: &str =
     "/Users/fbilhaut/src/perso/open-source/gte-rs/models/gte-multilingual-base/tokenizer.json";

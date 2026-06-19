@@ -1,16 +1,32 @@
 use std::path::{Path, PathBuf};
-use crate::pipeline::ExtractorMode;
+
+use serde::{Deserialize, Serialize};
+
+/// How to extract a per-sequence embedding from the model output tensor.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub enum ExtractorMode {
+    /// Output is already `[n, dim]` — use each row directly (e.g. `sentence_embedding`).
+    #[default] Raw,
+    /// Output is `[n, seq_len, dim]` — take the token at the given index (e.g. `Token(0)` for CLS).
+    Token(usize),
+    /// Output is `[n, seq_len, dim]` — masked mean-pool over the sequence dimension.
+    MeanPool,
+}
 
 /// All model-specific parameters needed to build a [`TextEmbeddingPipeline`].
 ///
 /// [`TextEmbeddingPipeline`]: crate::TextEmbeddingPipeline
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Configuration {
+    /// Path to the `tokenizer.json`
     tokenizer_path: PathBuf,
+    /// Path to the `model.onnx`
     model_path: PathBuf,
-    /// Which ONNX output index contains the embeddings.
+    /// Index of the ONNX output the contains the embeddings
     output_index: usize,
+    /// Embeddings extraction mode
     mode: ExtractorMode,
+    /// Max length of a sequence
     max_length: Option<usize>,
 }
 

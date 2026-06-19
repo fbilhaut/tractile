@@ -16,6 +16,7 @@ default = []
 metal = ["dep:tract-metal", "dep:tract-gpu"] # Apple Metal acceleration
 
 [dependencies]
+serde = { version = "1", features = ["derive"] }
 tract-onnx = "0.23"
 tract-core = "0.23"
 tokenizers = { version = "0.21", default-features = false, features = ["onig"] }

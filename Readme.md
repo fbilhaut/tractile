@@ -9,16 +9,20 @@ Text-embedding inference in pure Rust powered by [tract](https://github.com/sono
 - Pure-Rust ONNX inference via `tract-onnx`
 - HuggingFace-compatible tokenizer via `tokenizers`
 - Optional Apple Metal acceleration (`--features metal`)
+- Configurable embedding extraction: `Raw`, `Token(n)`, `MeanPool`
+- `Configuration` is serializable/deserializable via `serde`
 
 ## Quick start
 
 ```rust
-use tractile::{Configuration, ExtractorMode, TextEmbeddingPipeline, TextInput};
+use tractile::config::{Configuration, ExtractorMode};
+use tractile::input::TextInput;
+use tractile::pipeline::TextEmbeddingPipeline;
 
 let config = Configuration::new("path/to/tokenizer.json", "path/to/model.onnx")
-    .with_output_index(1)          // index of the output to use
-    .with_mode(ExtractorMode::Raw) // sentence_embedding output is already [n, dim]
-    .with_max_length(Some(512));   // optional truncation
+    .with_output_index(1)           // index of the output to use
+    .with_mode(ExtractorMode::Raw)  // sentence_embedding output is already [n, dim]
+    .with_max_length(Some(512));    // optional truncation
 
 let pipeline = TextEmbeddingPipeline::new(config)?;
 
@@ -44,6 +48,8 @@ tractile = { path = "." }
 
 ## Configuration
 
+`Configuration` can be built programmatically or deserialized from any serde-compatible format (JSON, TOML, …).
+
 | Method | Default | Description |
 |---|---|---|
 | `with_output_index(usize)` | `0` | Which ONNX output to use |
@@ -57,6 +63,10 @@ tractile = { path = "." }
 | `Raw` | `[n, dim]` | Dedicated sentence-embedding output (e.g. gte-multilingual-base output 1) |
 | `Token(i)` | `[n, seq, dim]` → take token `i` | CLS-token models: `Token(0)` |
 | `MeanPool` | `[n, seq, dim]` → masked mean | Mean-pooling over attended tokens |
+
+### Custom extractor
+
+Implement the `tractile::pipeline::Extractor` trait to plug in your own extraction logic.
 
 ## Examples
 

@@ -1,4 +1,4 @@
-port = 8080
+port = 12345
 
 [embedding]
 tokenizer_path = "models/gte-multilingual-base/tokenizer.json"

@@ -3,8 +3,7 @@ use tractile::config::Configuration;
 
 #[derive(Debug, Deserialize)]
 pub struct ServerConfig {
-    #[serde(default = "ServerConfig::default_port")]
-    port: u16,
+    port: Option<u16>,
     pub embedding: Option<Configuration>,
 }
 
@@ -14,11 +13,10 @@ impl ServerConfig {
         Ok(toml::from_str(&text)?)
     }
 
-    fn default_port() -> u16 {
-        8080
-    }
-
+    /// Port resolution order: `server.toml` → `PORT` env var → 80.
     pub fn port(&self) -> u16 {
         self.port
+            .or_else(|| std::env::var("PORT").ok().and_then(|s| s.parse().ok()))
+            .unwrap_or(80)
     }
 }

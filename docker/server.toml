@@ -1,0 +1,5 @@
+[embedding]
+tokenizer_path = "/app/models/gte-multilingual-base/tokenizer.json"
+model_path     = "/app/models/gte-multilingual-base/onnx/model.onnx"
+output_index   = 1
+mode           = "Raw"

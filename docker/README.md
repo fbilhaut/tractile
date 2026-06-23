@@ -84,15 +84,36 @@ curl -s -X POST http://localhost:12345/embed \
 
 ---
 
+## Publishing to GitHub Container Registry
+
+**Authenticate once** — generate a token at GitHub → Settings → Developer settings → Personal access tokens with the `write:packages` scope:
+
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io -u fbilhaut --password-stdin
+```
+
+**Build and push:**
+
+```bash
+docker buildx build -f docker/Dockerfile --platform linux/amd64 \
+  --build-arg HF_REVISION=refs/pr/23 \
+  -t ghcr.io/fbilhaut/tractile:latest --push .
+```
+
+**Pull on another machine:**
+
+```bash
+docker pull ghcr.io/fbilhaut/tractile:latest
+```
+
+> By default the package is private. To make it public: GitHub → repository → Packages → tractile → Package settings → Change visibility.
+
+---
+
 ## RunPod deployment
 
-1. Push the image to a registry (Docker Hub, GitHub Container Registry, etc.):
-   ```bash
-   docker buildx build -f docker/Dockerfile --platform linux/amd64 \
-     --build-arg HF_REVISION=refs/pr/23 \
-     -t yourrepo/tractile:v1 --push .
-   ```
+1. Push the image to GHCR (see above).
 2. In the RunPod console, create a **Load Balancer** endpoint.
-3. Set the container image and configure the environment:
+3. Set the container image to `ghcr.io/fbilhaut/tractile:latest` and configure the environment:
    - `PORT=80`
 4. Deploy. RunPod will poll `GET /ping` on port 80 — the worker appears as **Active** once the model finishes loading and `/ping` returns 200.

@@ -40,6 +40,7 @@ FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     libssl3 ca-certificates \
+    cuda-cudart-dev-12-4 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

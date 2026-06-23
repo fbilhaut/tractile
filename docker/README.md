@@ -86,19 +86,11 @@ curl -s -X POST http://localhost:12345/embed \
 
 ## Publishing to GitHub Container Registry
 
-**Authenticate once** — generate a token at GitHub → Settings → Developer settings → Personal access tokens with the `write:packages` scope:
+The image is built and pushed automatically by the GitHub Actions workflow (`.github/workflows/docker.yml`) on every push to `main`. It runs on a native `amd64` runner, avoiding the QEMU instability that affects cross-compilation on Apple Silicon.
 
-```bash
-echo $GITHUB_TOKEN | docker login ghcr.io -u fbilhaut --password-stdin
-```
+To trigger a build manually, or to override the HuggingFace revision: GitHub → Actions → **Build and push Docker image** → Run workflow.
 
-**Build and push:**
-
-```bash
-docker buildx build -f docker/Dockerfile --platform linux/amd64 \
-  --build-arg HF_REVISION=refs/pr/23 \
-  -t ghcr.io/fbilhaut/tractile:latest --push .
-```
+The image is pushed to `ghcr.io/fbilhaut/tractile:latest`. No credentials are needed — the workflow uses the built-in `GITHUB_TOKEN`.
 
 **Pull on another machine:**
 

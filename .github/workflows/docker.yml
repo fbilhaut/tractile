@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
+      hf_model:
+        description: "HuggingFace model repo"
+        default: "Alibaba-NLP/gte-multilingual-base"
       hf_revision:
         description: "HuggingFace revision (branch, tag, or PR ref)"
         default: "refs/pr/23"
@@ -40,6 +43,7 @@ jobs:
           push: true
           tags: ${{ env.IMAGE }}:latest
           build-args: |
+            HF_MODEL=${{ inputs.hf_model || 'Alibaba-NLP/gte-multilingual-base' }}
             HF_REVISION=${{ inputs.hf_revision || 'refs/pr/23' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

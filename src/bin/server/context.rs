@@ -1,25 +1,27 @@
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::RwLock;
 
-use tractile::config::Configuration;
 use tractile::pipeline::TextEmbeddingPipeline;
 
-use super::config::ServerConfig;
-
 pub struct AppContext {
-    pub embedding: Option<Mutex<TextEmbeddingPipeline>>,
+    pub embedding_pipeline: RwLock<Option<TextEmbeddingPipeline>>,
+    ready: AtomicBool,
 }
 
 impl AppContext {
-    pub fn new(config: &ServerConfig) -> tractile::Result<Self> {
-        Ok(Self {
-            embedding: config.embedding.as_ref().map(load_pipeline).transpose()?,
-        })
+    pub fn new() -> Self {
+        Self {
+            embedding_pipeline: RwLock::new(None),
+            ready: AtomicBool::new(false),
+        }
     }
-}
 
-fn load_pipeline(config: &Configuration) -> tractile::Result<Mutex<TextEmbeddingPipeline>> {
-    log::info!("Loading pipeline: model={:?}", config.model_path());
-    let pipeline = TextEmbeddingPipeline::new(config.clone())?;
-    log::info!("Pipeline ready");
-    Ok(Mutex::new(pipeline))
+    pub fn set_pipeline(&self, pipeline: TextEmbeddingPipeline) {
+        *self.embedding_pipeline.write().unwrap() = Some(pipeline);
+        self.ready.store(true, Ordering::Release);
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.ready.load(Ordering::Acquire)
+    }
 }
